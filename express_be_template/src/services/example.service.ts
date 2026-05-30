@@ -1,26 +1,34 @@
+import {
+  getExampleById,
+  listExamples,
+} from "../db/queries/example.queries";
+
 export type ExampleItem = {
   id: string;
   name: string;
   createdAt: string;
 };
 
-const ITEMS: ExampleItem[] = [
-  {
-    id: "1",
-    name: "First item",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "Second item",
-    createdAt: new Date().toISOString(),
-  },
-];
+export async function listItems(): Promise<ExampleItem[]> {
+  const rows = await listExamples();
 
-export function listItems(): ExampleItem[] {
-  return ITEMS;
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    createdAt: row.created_at.toISOString(),
+  }));
 }
 
-export function getItemById(id: string): ExampleItem | undefined {
-  return ITEMS.find((item) => item.id === id);
+export async function getItemById(id: string): Promise<ExampleItem | undefined> {
+  const row = await getExampleById(id);
+
+  if (!row) {
+    return undefined;
+  }
+
+  return {
+    id: row.id,
+    name: row.name,
+    createdAt: row.created_at.toISOString(),
+  };
 }

@@ -6,13 +6,18 @@ import { getItemById, listItems } from "../services/example.service";
 export function makeExampleRouter(): Router {
   const router = Router();
 
-  router.get("/api/examples", (_req, res) => {
-    res.json({ items: listItems() });
+  router.get("/api/examples", async (_req, res, next) => {
+    try {
+      const items = await listItems();
+      res.json({ items });
+    } catch (error) {
+      next(error);
+    }
   });
 
-  router.get("/api/examples/:id", (req, res, next) => {
+  router.get("/api/examples/:id", async (req, res, next) => {
     try {
-      const item = getItemById(req.params.id);
+      const item = await getItemById(req.params.id);
       if (!item) {
         throw new ApiError("Item not found", 404);
       }

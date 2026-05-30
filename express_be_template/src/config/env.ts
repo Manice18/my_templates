@@ -12,6 +12,14 @@ const envSchema = z.object({
 
   FE_ORIGIN: z.url().default("http://localhost:3000"),
 
+  DATABASE_URL: z
+    .string()
+    .startsWith("postgresql://", { message: "DATABASE_URL must be a PostgreSQL URL" }),
+
+  DB_MAX_CONNECTIONS: z.coerce.number().default(10),
+
+  DB_CONNECTION_TIMEOUT: z.coerce.number().default(30),
+
   LOG_LEVEL: z.enum(["error", "warn", "info", "http", "debug"]).default("info"),
 
   LOG_DIRECTORY: z.string().default("logs"),
